@@ -1,6 +1,8 @@
 // ------------------- import data --------------------------- //
 const express = require("express");
 const properties = require("./controllers/properties");
+const product = require("./controllers/product");
+
 
 const router = express();
 
