@@ -6,14 +6,17 @@ const router = express();
 
 // ------------------- routes
 
+// produto
 router.get('/produtos', properties.getProducts);
 router.get('/produtos/estoque', properties.getStock);
+
+// carrinho
 router.get('/carrinho', properties.getCart);
 router.post('/carrinho/produtos', properties.postProductsInCart);
 router.patch('/carrinho/produtos/:id', properties.patchProductsInCart);
 router.delete('/carrinho/produtos/:id', properties.deleteProductsInCart);
 router.delete('/carrinho', properties.deleteAllProductsInCart);
-router.post('/carrinho/finalizar-compra', properties.checkout);
+router.post('/finalizar-compra', properties.checkout);
 
 
 // ------------------- export router
