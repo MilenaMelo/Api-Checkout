@@ -5,14 +5,15 @@ const { returnCalculatedCart } = require('../utils/cart');
 
 // ------------------- functions
 
-async function addProducts() {
+// add products
+async function addProducts(req, res) {
     const { id, quantidade } = req.body;
 
     if (!id || !quantidade) {
-        return resizeBy.status(400).json({ mensagem: "É preciso passar id e quantidade do produto" });
+        return res.status(400).json({ mensagem: "É preciso passar id e quantidade do produto" });
     }
 
-    const dataFile =  await fileReader()
+    const dataFile = await fileReader();
     const { carrinho, produtos } = dataFile;
 
     const productFound = produtos.find(produto => produto.id === id);
@@ -37,7 +38,7 @@ async function addProducts() {
 
     if (productInCart === -1) {
         dataFile.carrinho.produtos.push(newProduct);
-    }else {
+    } else {
         dataFile.carrinho.produtos[productInCart].quantidade += newProduct.quantidade;
     }
 
@@ -46,16 +47,74 @@ async function addProducts() {
 
     // write in file
     const updateCart = await fileWriter(dataFile);
+
     if (!updateCart) {
-        res.status(500).json({ mensagem: "Falha ao adicionar produto no carrinho."});
+        res.status(500).json({ mensagem: "Falha ao adicionar produto no carrinho." });
     }
 
-    return res.status(201).json(calculatedCart);
+    return res.status(200).json(calculatedCart);
 }
 
+// edit amount products
+async function editAmountProducts(req, res) {
+    const { quantidade } = req.body;
+    const id = parseInt(req.params.id);
 
+    if (!id || !quantidade) {
+        return res.status(400).json({ mensagem: "É preciso passar id e quantidade do produto" });
+    }
 
+    const dataFile = await fileReader();
+    const { carrinho, produtos } = dataFile;
 
+    const productFound = produtos.find(produto => produto.id === id);
+
+    if (!productFound) {
+        return res.status(400).json({ mensagem: "Este produto não existe." });
+    }
+
+    const productIndexInCart = carrinho.produtos.findIndex(produto => produto.id === id);
+
+    if (productIndexInCart === -1) {
+        return res.status(400).json({ mensagem: "Este produto não está no carrinho." });
+    }
+
+    if (quantidade + carrinho.produtos[productIndexInCart].quantidade > productFound.estoque) {
+        return res.status(400).json({ mensagem: "Esse produto não tem estoque suficiente." });
+    }
+
+    if (quantidade + carrinho.produtos[productIndexInCart].quantidade < 0) {
+        return res.status(400).json({ mensagem: "Limite de redução da quantidade de produto no carrinho." });
+    }
+
+    dataFile.carrinho.produtos[productIndexInCart].quantidade += quantidade;
+
+    if (carrinho.produtos[productIndexInCart].quantidade === 0) {
+        dataFile.carrinho.produtos.splice(productIndexInCart, 1);
+    }
+
+    // write in file
+    const updateCart = await fileWriter(dataFile);
+
+    if (!updateCart) {
+        res.status(400).json({ mensagem: "Falha ao atualizar a quantidade de produtos." });
+    }
+
+    // recalculate values cart 
+    const calculatedCart = returnCalculatedCart(dataFile.carrinho);
+
+    return res.status(200).json(calculatedCart);
+
+}
+
+// delete product
+async function deleteProduct(req, res) {
+    
+}
 
 // ------------------- export functions --------------------- //
-module.exports = { addProducts }
+module.exports = { 
+    addProducts,
+    editAmountProducts,
+    deleteProduct
+}

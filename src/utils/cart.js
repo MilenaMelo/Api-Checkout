@@ -3,13 +3,13 @@ const { addBusinessDays } =  require('date-fns');
 
 // ------------------- functions
 
-function returnCalculatedCart(cart) {
+function returnCalculatedCart(carrinho) {
     const BASE_FREIGHT_PRICE = 5000;
     const VALUE_PURCHASE_FREE_SHIPPING = 20000;
 
     let subtotal = 0;
 
-    carrnho.produtos.forEach(produto => {
+    carrinho.produtos.forEach(produto => {
         subtotal += produto.preco * produto.quantidade;
     });
 
