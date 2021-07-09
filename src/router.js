@@ -2,14 +2,13 @@
 const express = require("express");
 const properties = require("./controllers/properties");
 const product = require("./controllers/product");
-
+const cart = require("./controllers/cart");
 
 const router = express();
 
 // ------------------- routes
 
-// produto
-router.get('/produtos', product.getProducts);
+
 router.get('/produtos/estoque', properties.getStock);
 
 // carrinho
@@ -19,6 +18,14 @@ router.patch('/carrinho/produtos/:id', properties.patchProductsInCart);
 router.delete('/carrinho/produtos/:id', properties.deleteProductsInCart);
 router.delete('/carrinho', properties.deleteAllProductsInCart);
 router.post('/finalizar-compra', properties.checkout);
+
+// ------------------- routes
+
+// produto
+router.get('/produtos', product.getProducts);
+
+//carrinho
+router.get('/carrinho', cart.addProducts);
 
 
 // ------------------- export router

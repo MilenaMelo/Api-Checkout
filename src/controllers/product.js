@@ -2,13 +2,14 @@
 const { fileReader } = require("../utils/database");
 
 
-// ------------------- GET functions
+// ------------------- functions
 
 // return products
 async function getProducts(req, res) {
     let { produtos } = await fileReader();
     const { categoria, precoInicial, precoFinal } = req.query;
 
+    // filter array
     products = produtos.filter(produto => produto.estoque > 0);
 
     // case empty array
