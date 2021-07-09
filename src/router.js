@@ -9,7 +9,7 @@ const router = express();
 // ------------------- routes
 
 // produto
-router.get('/produtos', properties.getProducts);
+router.get('/produtos', product.getProducts);
 router.get('/produtos/estoque', properties.getStock);
 
 // carrinho

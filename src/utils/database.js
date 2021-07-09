@@ -1,11 +1,17 @@
+// ------------------- import --------------------------- //
 const fs = require('fs');
 
+// use promises
 const fsp = fs.promises;
 
-const FILE = 'banco/data.json';
-const PATH_DATABASE = 'banco';
+// use path and data
+const FILE = 'src/database/data.json';
+const PATH_DATABASE = 'database';
 
-const readFile = async () => {
+// ------------------- read file
+
+const fileReader = async () => {
+    // check file
     try {
         if (fs.existsSync(FILE)) {
             const file = await fsp.readFile(FILE, (err, data) => {
@@ -25,7 +31,7 @@ const readFile = async () => {
     }
 };
 
-const writeFile = async (data) => {
+const fileWriter = async (data) => {
     try {
         if (!fs.existsSync(PATH_DATABASE)) {
             fs.mkdirSync(PATH_DATABASE);
@@ -37,7 +43,6 @@ const writeFile = async (data) => {
     }
 };
 
-module.exports = {
-    readFile: readFile,
-    writeFile: writeFile
-}
+
+// ------------------- export functions --------------------- //
+module.exports = { fileReader, fileWriter }

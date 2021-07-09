@@ -1,13 +1,13 @@
 // ------------------- import data --------------------------- //
-const { readFIle } = require("../utils/database");
+const { fileReader } = require("../utils/database");
 
 
 // ------------------- GET functions
 
 // return products
 async function getProducts(req, res) {
-    const file = await readFIle();
-
+    const file = await fileReader();
+    console.log(file);
 
 }
 
