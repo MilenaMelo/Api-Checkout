@@ -47,6 +47,24 @@ function validateUserData(data) {
     return true;
 }
 
+// validate stok
+function validateStok(carrinho, estoque) {
+    const missingProducts = [];
+
+    for (const productCart of carrinho.produtos) {
+        const produto = estoque.find(produto => produto.id === productCart.id);
+
+        if (productCart.quantidade > produto.estoque) {
+            missingProducts.push(produto);
+        }
+    }
+
+    return missingProducts;
+}
+
 
 // ------------------- export functions --------------------- //
-module.exports = { returnCalculatedCart, validateUserData }
+module.exports = { 
+    returnCalculatedCart, 
+    validateUserData, 
+    validateStok }

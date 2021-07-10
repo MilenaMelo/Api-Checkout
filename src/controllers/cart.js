@@ -1,6 +1,6 @@
 // ------------------- import data --------------------------- //
 const { fileReader, fileWriter } = require("../utils/database");
-const { returnCalculatedCart, validateUserData } = require('../utils/cart');
+const { returnCalculatedCart, validateUserData, validateStok } = require('../utils/cart');
 
 
 // ------------------- functions
@@ -188,11 +188,46 @@ async function completePurchase() {
     }
 
     // validate user data
-    const validateddUserData = validateUserData(payment.customer);
+    const validatedUserData = validateUserData(payment.customer);
 
-    if (!validateddUserData) {
+    if (!validatedUserData) {
         return res.status(404).json({ mensagem: "Os dados do usuário estão inválidos." });
     }
+
+    const missingProducts = validateStok(carrinho, produtos);
+
+    // check missing products
+    if (missingProducts.length !== 0) {
+        return res.status(404).json({ mensagem: "Existem produtos em falta no seu carrinho." });
+    }
+
+    // calculate total
+    const calculatedCart = returnCalculatedCart(carrinho);
+
+    for (const productInCart of carrinho.produtos) {
+        const indexStockProduc = produtos.findIndex(produto => produto.id === productInCart.id);
+    
+        dataFile.produtos[indexStockProduc].estoque -= productInCart.quantidade;
+    }
+
+    // clear cart
+    dataFile.carrinho = {
+        produtos: [],
+        subtoal: 0,
+        dataDeEntrega: null,
+        valorDoFrete: 0,
+        totalAPagar: 0
+    }
+
+    // write in file
+    const updateFile = await fileWriter(dataFile);
+
+    if (!updateFile) {
+        res.status(400).json({ mensagem: "Falha no processamento do estoque." });
+    }
+
+    // return message
+    return res.status(200).json({ mensagem: "Compra efetuada com sucesso.", carrinho: calculatedCart });
 }
 
 

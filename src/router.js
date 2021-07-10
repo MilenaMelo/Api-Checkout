@@ -16,7 +16,7 @@ router.post('/carrinho/produtos/', cart.addProducts);
 router.patch('/carrinho/produtos/:id', cart.editAmountProducts);
 router.delete('/carrinho/produtos/:id', cart.deleteProduct);
 router.delete('/carrinho', cart.deleteCart);
-router.post('/finalizar-carrinho', cart.completePurchase);
+router.post('/carrinho/finalizar-compra', cart.completePurchase);
 
 
 // ------------------- export router

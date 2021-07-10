@@ -88,15 +88,8 @@
   "carrinho": {
     "produtos": [
       {
-        "id": 3,
-        "quantidade": 2,
-        "nome": "Limpador Cif Multiuso 800g Em Pó",
-        "preco": 999,
-        "categoria": "Limpeza"
-      },
-      {
         "id": 1,
-        "quantidade": 1,
+        "quantidade": 5,
         "nome": "Pipoca para Microondas Manteiga YOKI 50g",
         "preco": 169,
         "categoria": "Bazar"
