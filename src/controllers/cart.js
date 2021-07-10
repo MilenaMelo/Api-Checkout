@@ -136,9 +136,35 @@ async function deleteProduct(req, res) {
 
 }
 
+async function deleteCart(req, res) {
+    const dataFile = await fileReader();
+
+    // delete cart
+    dataFile.carrinho = {
+        produtos: [],
+        subtoal: 0,
+        dataDeEntrega: null,
+        valorDoFrete: 0,
+        totalAPagar: 0
+    }
+
+    // write in file
+    const updateCart = await fileWriter(dataFile);
+
+    if (!updateCart) {
+        res.status(400).json({ mensagem: "Não foi possível excluir o carrinho." });
+    }
+
+    // recalculate values cart 
+    const calculatedCart = returnCalculatedCart(dataFile.carrinho);
+
+    return res.status(200).json({ mensagem: "O carrinho foi excluído com sucesso." }); 
+}
+
 // ------------------- export functions --------------------- //
 module.exports = { 
     addProducts,
     editAmountProducts,
-    deleteProduct
+    deleteProduct,
+    deleteCart
 }
