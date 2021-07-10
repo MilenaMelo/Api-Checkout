@@ -1,6 +1,6 @@
 // ------------------- import data --------------------------- //
 const { fileReader, fileWriter } = require("../utils/database");
-const { returnCalculatedCart } = require('../utils/cart');
+const { returnCalculatedCart, validateUserData } = require('../utils/cart');
 
 
 // ------------------- functions
@@ -136,6 +136,7 @@ async function deleteProduct(req, res) {
 
 }
 
+// delete cart
 async function deleteCart(req, res) {
     const dataFile = await fileReader();
 
@@ -155,16 +156,53 @@ async function deleteCart(req, res) {
         res.status(400).json({ mensagem: "Não foi possível excluir o carrinho." });
     }
 
-    // recalculate values cart 
-    const calculatedCart = returnCalculatedCart(dataFile.carrinho);
-
+    // return message
     return res.status(200).json({ mensagem: "O carrinho foi excluído com sucesso." }); 
 }
+
+// detail cart
+async function detailCart(req, res) {
+    const { carrinho } = await fileReader();
+
+    // recalculate values cart 
+    const calculatedCart = returnCalculatedCart(carrinho);
+    return res.status(200).json(calculatedCart);
+}
+
+// complete purchase
+async function completePurchase() {
+    const payment = req.body;
+
+    // read cart
+    const dataFile = await fileReader();
+    const { carrinho, produtos } = dataFile;
+
+    // validate cart
+    if (carrinho.produtos.length === 0) {
+        return res.status(404).json({ mensagem: "O carrinho está vazio." });
+    }
+
+    // validate information in body
+    if (!payment.customer) {
+        return res.status(404).json({ mensagem: "Informe os dados." });
+    }
+
+    // validate user data
+    const validateddUserData = validateUserData(payment.customer);
+
+    if (!validateddUserData) {
+        return res.status(404).json({ mensagem: "Os dados do usuário estão inválidos." });
+    }
+}
+
+
 
 // ------------------- export functions --------------------- //
 module.exports = { 
     addProducts,
     editAmountProducts,
     deleteProduct,
-    deleteCart
+    deleteCart,
+    detailCart,
+    completePurchase
 }
