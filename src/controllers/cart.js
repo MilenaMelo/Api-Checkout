@@ -76,7 +76,7 @@ async function editAmountProducts(req, res) {
     const productIndexInCart = carrinho.produtos.findIndex(produto => produto.id === id);
 
     if (productIndexInCart === -1) {
-        return res.status(400).json({ mensagem: "Este produto não está no carrinho." });
+        return res.status(404).json({ mensagem: "Este produto não está no carrinho." });
     }
 
     if (quantidade + carrinho.produtos[productIndexInCart].quantidade > productFound.estoque) {
@@ -109,7 +109,31 @@ async function editAmountProducts(req, res) {
 
 // delete product
 async function deleteProduct(req, res) {
-    
+    const id = parseInt(req.params.id);
+
+    const dataFile = await fileReader();
+    const { carrinho } = dataFile;
+
+    const productIndexInCart = carrinho.produtos.findIndex(produto => produto.id === id);
+
+    if (productIndexInCart === -1) {
+        return res.status(404).json({ mensagem: "Este produto não está no carrinho." });
+    }
+
+    dataFile.carrinho.produtos.splice(productIndexInCart, 1);
+
+    // write in file
+    const updateCart = await fileWriter(dataFile);
+
+    if (!updateCart) {
+        res.status(400).json({ mensagem: "Falha ao atualizar a quantidade de produtos." });
+    }
+
+    // recalculate values cart 
+    const calculatedCart = returnCalculatedCart(dataFile.carrinho);
+
+    return res.status(200).json(calculatedCart);
+
 }
 
 // ------------------- export functions --------------------- //
