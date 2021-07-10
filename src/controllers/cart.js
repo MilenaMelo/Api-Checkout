@@ -170,7 +170,7 @@ async function detailCart(req, res) {
 }
 
 // complete purchase
-async function completePurchase() {
+async function completePurchase(req, res) {
     const payment = req.body;
 
     // read cart
@@ -198,7 +198,7 @@ async function completePurchase() {
 
     // check missing products
     if (missingProducts.length !== 0) {
-        return res.status(404).json({ mensagem: "Existem produtos em falta no seu carrinho." });
+        return res.status(404).json({ mensagem: "Existem produtos em falta no seu carrinho.", missingProducts });
     }
 
     // calculate total
